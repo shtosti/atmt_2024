@@ -1,2 +1,4 @@
 assignments/01/baseline/
+assignments/01/baseline_large/checkpoints
+assignments/01/baseline_small/checkpoints
 __pycache__/
