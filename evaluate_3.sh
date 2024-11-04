@@ -21,7 +21,17 @@
 # assignments/03/small_clip-norm2/translations.p.txt \
 # | sacrebleu data/en-fr/raw/test.en
 
-### small hyperparam tuning ###
+# ### small hyperparam tuning ###
+# cat \
+# assignments/03/small_hyperparam-tuning/translations.p.txt \
+# | sacrebleu data/en-fr/raw/test.en
+
+# ### large hyperparam tuning ###
+# cat \
+# assignments/03/large_hyperparam-tuning/translations.p.txt \
+# | sacrebleu data/en-fr/raw/test.en
+
+### large hyperparam-tuning-2 ###
 cat \
-assignments/03/small_hyperparam-tuning/translations.p.txt \
+assignments/03/large_hyperparam-tuning-2/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en

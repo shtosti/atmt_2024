@@ -21,7 +21,17 @@
 # assignments/03/small_clip-norm2/translations.txt \
 # assignments/03/small_clip-norm2/translations.p.txt en
 
-### small hyperparam tuning ###
+# ### small hyperparam tuning ###
+# scripts/postprocess.sh \
+# assignments/03/small_hyperparam-tuning/translations.txt \
+# assignments/03/small_hyperparam-tuning/translations.p.txt en
+
+# ### large hyperparam tuning ###
+# scripts/postprocess.sh \
+# assignments/03/large_hyperparam-tuning/translations.txt \
+# assignments/03/large_hyperparam-tuning/translations.p.txt en
+
+### large hyperparam-tuning-2 ###
 scripts/postprocess.sh \
-assignments/03/small_hyperparam-tuning/translations.txt \
-assignments/03/small_hyperparam-tuning/translations.p.txt en
+assignments/03/large_hyperparam-tuning-2/translations.txt \
+assignments/03/large_hyperparam-tuning-2/translations.p.txt en
