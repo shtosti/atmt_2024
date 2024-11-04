@@ -22,5 +22,4 @@ python translate.py \
 --data data/en-fr/prepared \
 --dicts data/en-fr/prepared \
 --checkpoint-path assignments/03/small_lr0p003/checkpoints/checkpoint_last.pt \
---output assignments/03/small_lr0p003/translations.txt \
---lr 0.003
+--output assignments/03/small_lr0p003/translations.txt 
