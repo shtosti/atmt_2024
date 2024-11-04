@@ -64,13 +64,38 @@
 # --batch-size 8 \
 # --lr 0.003
 
-### large hyperparam-tuning-2 ###
+# ### large hyperparam-tuning-2 ###
+# python train.py \
+# --data data/en-fr/prepared \
+# --source-lang fr \
+# --target-lang en \
+# --save-dir assignments/03/large_hyperparam-tuning-2/checkpoints \
+# --log-file assignments/03/large_hyperparam-tuning-2/logs/train_log.txt \
+# --clip-norm 2.0 \
+# --batch-size 8 \
+# --lr 0.0003 \
+# --patience 5
+
+# ### small BPE ###
+# python train.py \
+# --train-on-tiny \
+# --data data/en-fr/prepared_bpe \
+# --source-lang fr \
+# --target-lang en \
+# --save-dir assignments/03/small_bpe/checkpoints \
+# --log-file assignments/03/small_bpe/logs/train_log.txt \
+# --clip-norm 2.0 \
+# --batch-size 8 \
+# --lr 0.0003 \
+# --patience 3
+
+### large BPE ###
 python train.py \
---data data/en-fr/prepared \
+--data data/en-fr/prepared_bpe \
 --source-lang fr \
 --target-lang en \
---save-dir assignments/03/large_hyperparam-tuning-2/checkpoints \
---log-file assignments/03/large_hyperparam-tuning-2/logs/train_log.txt \
+--save-dir assignments/03/large_bpe/checkpoints \
+--log-file assignments/03/large_bpe/logs/train_log.txt \
 --clip-norm 2.0 \
 --batch-size 8 \
 --lr 0.0003 \

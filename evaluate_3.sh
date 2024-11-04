@@ -31,7 +31,17 @@
 # assignments/03/large_hyperparam-tuning/translations.p.txt \
 # | sacrebleu data/en-fr/raw/test.en
 
-### large hyperparam-tuning-2 ###
+# ### large hyperparam-tuning-2 ###
+# cat \
+# assignments/03/large_hyperparam-tuning-2/translations.p.txt \
+# | sacrebleu data/en-fr/raw/test.en
+
+# ### small BPE ###
+# cat \
+# assignments/03/small_bpe/translations.p.txt \
+# | sacrebleu data/en-fr/raw/test.en
+
+### large BPE ###
 cat \
-assignments/03/large_hyperparam-tuning-2/translations.p.txt \
+assignments/03/large_bpe/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en

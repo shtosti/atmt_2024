@@ -31,7 +31,17 @@
 # assignments/03/large_hyperparam-tuning/translations.txt \
 # assignments/03/large_hyperparam-tuning/translations.p.txt en
 
-### large hyperparam-tuning-2 ###
-scripts/postprocess.sh \
-assignments/03/large_hyperparam-tuning-2/translations.txt \
-assignments/03/large_hyperparam-tuning-2/translations.p.txt en
+# ### large hyperparam-tuning-2 ###
+# scripts/postprocess.sh \
+# assignments/03/large_hyperparam-tuning-2/translations.txt \
+# assignments/03/large_hyperparam-tuning-2/translations.p.txt en
+
+# ### small BPE ###
+# scripts/postprocess_data_BPE.sh \
+# assignments/03/small_bpe/translations.txt \
+# assignments/03/small_bpe/translations.p.txt en
+
+### large BPE ###
+scripts/postprocess_data_BPE.sh \
+assignments/03/large_bpe/translations.txt \
+assignments/03/large_bpe/translations.p.txt en
