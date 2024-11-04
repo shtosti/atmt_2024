@@ -3,7 +3,7 @@
 
 # Run translate.sh
 echo "Running translation script..."
-./translate.sh
+./translate_1.sh
 
 # Check if translate.sh was successful
 if [ $? -ne 0 ]; then
@@ -14,7 +14,7 @@ fi
 
 # Run postprocess.sh
 echo "Running postprocess script..."
-./postprocess.sh
+./postprocess_1.sh
 
 # Check if postprocess.sh was successful
 if [ $? -ne 0 ]; then
@@ -25,7 +25,7 @@ fi
 
 # Run evaluate.sh
 echo "Running evaluation script..."
-./evaluate.sh
+./evaluate_1.sh
 
 # Check if evaluate.sh was successful
 if [ $? -ne 0 ]; then
