@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Run training
+echo "Running training script..."
+./train_model_3.sh
+
+# Check if trainining was successful
+if [ $? -ne 0 ]; then
+    echo "Error occurred while running train_model_3.sh"
+    exit 1
+fi
+
 
 # Run translation
 echo "Running translation script..."

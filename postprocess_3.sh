@@ -16,7 +16,12 @@
 # assignments/03/small_lr0p003/translations.txt \
 # assignments/03/small_lr0p003/translations.p.txt en
 
-### small clip norm 2.0 ###
+# ### small clip norm 2.0 ###
+# scripts/postprocess.sh \
+# assignments/03/small_clip-norm2/translations.txt \
+# assignments/03/small_clip-norm2/translations.p.txt en
+
+### small hyperparam tuning ###
 scripts/postprocess.sh \
-assignments/03/small_clip-norm2/translations.txt \
-assignments/03/small_clip-norm2/translations.p.txt en
+assignments/03/small_hyperparam-tuning/translations.txt \
+assignments/03/small_hyperparam-tuning/translations.p.txt en

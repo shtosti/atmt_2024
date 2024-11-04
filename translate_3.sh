@@ -28,3 +28,11 @@
 # --dicts data/en-fr/prepared \
 # --checkpoint-path assignments/03/small_clip-norm2/checkpoints/checkpoint_last.pt \
 # --output assignments/03/small_clip-norm2/translations.txt 
+
+### small hyperparam-tuning ###
+python translate.py \
+--data data/en-fr/prepared \
+--dicts data/en-fr/prepared \
+--checkpoint-path assignments/03/small_hyperparam-tuning/checkpoints/checkpoint_last.pt \
+--output assignments/03/small_hyperparam-tuning/translations.txt \
+--batch-size 8

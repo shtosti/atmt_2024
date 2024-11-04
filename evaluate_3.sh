@@ -16,7 +16,12 @@
 # assignments/03/small_lr0p003/translations.p.txt \
 # | sacrebleu data/en-fr/raw/test.en
 
-### small clip norm 2.0 ###
+# ### small clip norm 2.0 ###
+# cat \
+# assignments/03/small_clip-norm2/translations.p.txt \
+# | sacrebleu data/en-fr/raw/test.en
+
+### small hyperparam tuning ###
 cat \
-assignments/03/small_clip-norm2/translations.p.txt \
+assignments/03/small_hyperparam-tuning/translations.p.txt \
 | sacrebleu data/en-fr/raw/test.en
