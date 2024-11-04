@@ -213,6 +213,11 @@ if __name__ == '__main__':
     args = get_args()
     args.device_id = 0
 
+    # ensure logging dir exists
+    if args.log_file:
+        log_dir = os.path.dirname(args.log_file)
+        os.makedirs(log_dir, exist_ok=True)
+
     # Set up logging to file
     logging.basicConfig(filename=args.log_file, filemode='a', level=logging.INFO,
                         format='%(levelname)s: %(message)s')
