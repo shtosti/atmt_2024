@@ -194,7 +194,7 @@ def main(args):
                     i.e. those that have reached the final EOS token. 
                     The final result is only computed using the values added with "add_final", 
                     since only completed seqs should be considered as candidates.
-                    Termination issues - when would the search stop if candidates have various lengths?
+                    Else -> Termination issues - when would the search stop if candidates have various lengths?
                     """
 
                     # Store the node as final if EOS is generated
