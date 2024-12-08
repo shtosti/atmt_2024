@@ -250,6 +250,17 @@ def main(args):
         output_sentences = [decoded_batch[row, :] for row in range(decoded_batch.shape[0])]
 
         # __QUESTION 6: What is the purpose of this for loop?
+        """
+        This loop perform truncation of seqs up to the first occurance of the EOS token.
+
+        The first condition truncated up to the index of the first EOS, and appends the truncated seq to temp:
+        if len(first_eos) > 0:
+            temp.append(sent[:first_eos[0]])
+
+        The second condition simply appends the whole seq to temp, since EOS has not been generated yet.
+        else:
+            temp.append(sent)
+        """
         temp = list()
         for sent in output_sentences:
             first_eos = np.where(sent == tgt_dict.eos_idx)[0]
