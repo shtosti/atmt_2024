@@ -218,6 +218,27 @@ def main(args):
             # #import pdb;pdb.set_trace()
             # __QUESTION 5: What happens internally when we prune our beams?
             # How do we know we always maintain the best sequences?
+            """
+            The answer can be found in beam.py:
+
+            def prune(self):
+                # Removes all nodes but the beam_size best ones (lowest neg log prob)
+                nodes = PriorityQueue()
+                # Keep track of how many search paths are already finished (EOS)
+                finished = self.final.qsize()
+                for _ in range(self.beam_size-finished):
+                    node = self.nodes.get()
+                    nodes.put(node) 
+                self.nodes = nodes
+
+            By pruning, we ensure only the highest-prob candidate seqs are retained;
+            it reduces the number of nodes / candidate seqs tracked.
+            As seen in the prune() method, pruning only applies to intermediate steps (self.nodes), 
+            whereas final seqs (self.final, those that have reached EOS), are not pruned.
+            We know that we maintain the best seqs, because take those with lowest neg log prob.
+            The use of a priority queue ensures that nodes are automatically ordered by their scores.
+            Importantly, completed seqs are tracked separately in self.final and remain safe from deletion/pruning.
+            """
             for search in searches:
                 search.prune()
 
