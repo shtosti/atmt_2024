@@ -133,6 +133,12 @@ def main(args):
                 node = BeamSearchNode(searches[i], emb, lstm_out, final_hidden, final_cell,
                                       mask, torch.cat((go_slice[i], next_word)), log_p, 1)
                 # __QUESTION 3: Why do we add the node with a negative score?
+                """
+                To "flip" the logic of min-heaps, as they are built in python, and avoid constructing max-heaps. 
+                If we use the node values as they are originally, we would access (=remove) nodes with smallest probabilities.
+                Since we are interested in the nodes with the largest probabilities, we need to flip their values
+                and make them negative -> the largest prob becomes the smallest value -> removed first.
+                """
                 searches[i].add(-node.eval(args.alpha), node)
 
         #import pdb;pdb.set_trace()
