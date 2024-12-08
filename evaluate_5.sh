@@ -9,7 +9,7 @@
 
 
 # Starting beam size
-START_BEAM=25
+START_BEAM=2
 # Ending beam size
 END_BEAM=25
 # Beam increment
