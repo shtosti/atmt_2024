@@ -188,6 +188,14 @@ def main(args):
 
                     # __QUESTION 4: How are "add" and "add_final" different? 
                     # What would happen if we did not make this distinction?
+                    """
+                    "add" increments intermediate sequences, i.e. those that have not yet reached the EOS token -->
+                    generation continues. "add_final" stores those nodes which correspond to the completed seqs, 
+                    i.e. those that have reached the final EOS token. 
+                    The final result is only computed using the values added with "add_final", 
+                    since only completed seqs should be considered as candidates.
+                    Termination issues - when would the search stop if candidates have various lengths?
+                    """
 
                     # Store the node as final if EOS is generated
                     if next_word[-1] == tgt_dict.eos_idx:
