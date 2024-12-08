@@ -86,9 +86,9 @@ def main(args):
             "go_slice" is a tensor we create to start as the starting token for each batch seq. 
             Its role is to mark the beginning of the sequence for consistent decoding.
 
-            2D tensor with shape (batch, 1)
-            batch: n seqs in the batch
-            1: single start token for each seq
+            2D tensor with shape (batch, 1) -> initialize with each value = 1.0
+            batch: n seqs in the batch -> n rows
+            1: single start token for each seq -> n columns in each row
             """
             go_slice = \
                 torch.ones(sample['src_tokens'].shape[0], 1).fill_(tgt_dict.eos_idx).type_as(sample['src_tokens'])
