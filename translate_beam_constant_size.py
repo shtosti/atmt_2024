@@ -151,7 +151,7 @@ def main(args):
         for _ in range(args.max_len-1):
 
             # Get the current nodes to expand
-            nodes = [n[1] for s in searches for n in s.get_current_beams()]
+            nodes = [n[1] for s in searches for n in s.get_current_beams() if not n[1].completed]
 
             if not nodes:
                 break
@@ -192,6 +192,7 @@ def main(args):
                     node = nodes[i]
                     search = node.search
 
+
                     # __QUESTION 4: How are "add" and "add_final" different? 
                     # What would happen if we did not make this distinction?
                     """
@@ -203,23 +204,25 @@ def main(args):
                     Else -> Termination issues - when would the search stop if candidates have various lengths?
                     """
 
+                    completed = next_word[-1] == tgt_dict.eos_idx # create a variable for better readability
+
                     # Store the node as final if EOS is generated
-                    if next_word[-1] == tgt_dict.eos_idx:
-                        node = BeamSearchNode(
+                    if completed:
+                        new_node = BeamSearchNode(
                             search, node.emb, node.lstm_out, node.final_hidden,
                             node.final_cell, node.mask, torch.cat((prev_words[i][0].view([1]),
-                            next_word)), node.logp, node.length
+                            next_word)), node.logp, node.length, completed=True
                             )
-                        search.add_final(-node.eval(args.alpha), node)
+                        search.add_final(-new_node.eval(args.alpha), new_node)
 
                     # Add the node to current nodes for next iteration
                     else:
-                        node = BeamSearchNode(
+                        new_node = BeamSearchNode(
                             search, node.emb, node.lstm_out, node.final_hidden,
                             node.final_cell, node.mask, torch.cat((prev_words[i][0].view([1]),
                             next_word)), node.logp + log_p, node.length + 1
                             )
-                        search.add(-node.eval(args.alpha), node)
+                        search.add(-new_node.eval(args.alpha), new_node)
 
             # #import pdb;pdb.set_trace()
             # __QUESTION 5: What happens internally when we prune our beams?
