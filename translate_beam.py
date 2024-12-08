@@ -101,6 +101,11 @@ def main(args):
             decoder_out, _ = model.decoder(go_slice, encoder_out)
 
             # __QUESTION 2: Why do we keep one top candidate more than the beam size?
+            """
+            Not sure - I have found some information that this is a back-up candidate for 
+            more robustness, e.g. in case there are duplicates, tie-breaking, or if some candidate
+            violates the constraints (e.g. prohibited tokens) and must be pruned.
+            """
             log_probs, next_candidates = torch.topk(torch.log(torch.softmax(decoder_out, dim=2)),
                                                     args.beam_size+1, dim=-1)
 
