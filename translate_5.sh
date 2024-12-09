@@ -33,10 +33,10 @@
 
 
 BEAM_SIZE=3
-OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE"
+OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE-constant-pruning"
 mkdir -p "$OUTPUT_DIR"
 
-python translate_beam.py \
+python translate_beam_constant_size.py \
 --beam-size $BEAM_SIZE \
 --data data/en-fr/prepared \
 --dicts data/en-fr/prepared \

@@ -10,7 +10,7 @@ from torch.serialization import default_restore_location
 from seq2seq import models, utils
 from seq2seq.data.dictionary import Dictionary
 from seq2seq.data.dataset import Seq2SeqDataset, BatchSampler
-from seq2seq.beam import BeamSearch, BeamSearchNode
+from seq2seq.beam_old import BeamSearch, BeamSearchNode
 
 # measure decoding time
 import time

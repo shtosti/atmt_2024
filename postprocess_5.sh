@@ -26,7 +26,7 @@
 
 
 BEAM_SIZE=3
-OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE"
+OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE-constant-pruning"
 scripts/postprocess.sh \
 $OUTPUT_DIR/translations.txt \
 $OUTPUT_DIR/translations.p.txt en

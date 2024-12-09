@@ -28,7 +28,7 @@
 
 # Loop over the beam sizes
 BEAM_SIZE=3
-OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE"
+OUTPUT_DIR="assignments/05/large--beam-size-$BEAM_SIZE-constant-pruning"
     cat \
     $OUTPUT_DIR/translations.p.txt \
     | sacrebleu data/en-fr/raw/test.en

@@ -10,7 +10,7 @@ from torch.serialization import default_restore_location
 from seq2seq import models, utils
 from seq2seq.data.dictionary import Dictionary
 from seq2seq.data.dataset import Seq2SeqDataset, BatchSampler
-from seq2seq.beam import BeamSearch, BeamSearchNode
+from seq2seq.beam_old import BeamSearch, BeamSearchNode
 
 # measure decoding time
 import time
@@ -148,10 +148,22 @@ def main(args):
 
         #import pdb;pdb.set_trace()
         # Start generating further tokens until max sentence length reached
+        
+        # Initialize best finished scores to -inf for all beams
+        # best_finished_scores = [-float('inf')] * batch_size
+        best_finished_scores = []
+        for search in searches:
+            if not search.final.empty():  # If there are finished hypotheses
+                best_score, _, _ = search.final.queue[0]  # Get the best score (lowest negative log prob)
+                best_finished_scores.append(best_score)
+            else:  # No finished hypotheses yet
+                best_finished_scores.append(-float('inf'))
+
+        
         for _ in range(args.max_len-1):
 
             # Get the current nodes to expand
-            nodes = [n[1] for s in searches for n in s.get_current_beams() if not n[1].completed]
+            nodes = [n[1] for s in searches for n in s.get_current_beams()]
 
             if not nodes:
                 break
@@ -192,7 +204,6 @@ def main(args):
                     node = nodes[i]
                     search = node.search
 
-
                     # __QUESTION 4: How are "add" and "add_final" different? 
                     # What would happen if we did not make this distinction?
                     """
@@ -204,25 +215,23 @@ def main(args):
                     Else -> Termination issues - when would the search stop if candidates have various lengths?
                     """
 
-                    completed = next_word[-1] == tgt_dict.eos_idx # create a variable for better readability
-
                     # Store the node as final if EOS is generated
-                    if completed:
-                        new_node = BeamSearchNode(
+                    if next_word[-1] == tgt_dict.eos_idx:
+                        node = BeamSearchNode(
                             search, node.emb, node.lstm_out, node.final_hidden,
                             node.final_cell, node.mask, torch.cat((prev_words[i][0].view([1]),
-                            next_word)), node.logp, node.length, completed=True
+                            next_word)), node.logp, node.length
                             )
-                        search.add_final(-new_node.eval(args.alpha), new_node)
+                        search.add_final(-node.eval(args.alpha), node)
 
                     # Add the node to current nodes for next iteration
                     else:
-                        new_node = BeamSearchNode(
+                        node = BeamSearchNode(
                             search, node.emb, node.lstm_out, node.final_hidden,
                             node.final_cell, node.mask, torch.cat((prev_words[i][0].view([1]),
                             next_word)), node.logp + log_p, node.length + 1
                             )
-                        search.add(-new_node.eval(args.alpha), new_node)
+                        search.add(-node.eval(args.alpha), node)
 
             # #import pdb;pdb.set_trace()
             # __QUESTION 5: What happens internally when we prune our beams?
@@ -248,8 +257,12 @@ def main(args):
             The use of a priority queue ensures that nodes are automatically ordered by their scores.
             Importantly, completed seqs are tracked separately in self.final and remain safe from deletion/pruning.
             """
-            for search in searches:
-                search.prune()
+            for i, search in enumerate(searches):
+                search.prune(best_finished_scores[i])
+
+            # stop if no active nodes left
+            if all(not search.has_active_nodes() for search in searches):
+                break
 
         # Segment into sentences
         best_sents = torch.stack([search.get_best()[1].sequence[1:].cpu() for search in searches])

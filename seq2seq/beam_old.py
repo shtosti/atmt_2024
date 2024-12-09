@@ -16,6 +16,8 @@ class BeamSearch(object):
         self.final = PriorityQueue() # beams that ended in EOS
 
         self._counter = count() # for correct ordering of nodes with same score
+        self.best_finished_logp = -float('inf')
+
 
 
     def add(self, score, node):
@@ -28,6 +30,10 @@ class BeamSearch(object):
         missing = self.max_len - node.length
         node.sequence = torch.cat((node.sequence.cpu(), torch.tensor([self.pad]*missing).long()))
         self.final.put((score, next(self._counter), node))
+
+        # Update the best finished log probability
+        if score > self.best_finished_logp:
+            self.best_finished_logp = score
 
     def get_current_beams(self):
         """ Returns beam_size current nodes with the lowest negative log probability """
@@ -55,32 +61,39 @@ class BeamSearch(object):
 
         return node
 
-    def prune(self, min_finished_score=None):
-        """ Removes all nodes but the beam_size best ones (lowest neg log prob).
-        Additionally, prune nodes with scores worse than the best finished hypothesis. """
+    # def prune(self):
+    #     """ Removes all nodes but the beam_size best ones (lowest neg log prob) """
+    #     nodes = PriorityQueue()
+    #     # Keep track of how many search paths are already finished (EOS)
+    #     finished = self.final.qsize()
+    #     for _ in range(self.beam_size-finished):
+    #         node = self.nodes.get()
+    #         nodes.put(node)
+    #     self.nodes = nodes
+
+    def prune(self):
+        """ modification for constant beam with pruning """
         nodes = PriorityQueue()
-        # Keep track of how many search paths are already finished (EOS)
         finished = self.final.qsize()
+        
+        # we are keeping the finished paths in final (no pruning needed for those)
+        for _ in range(finished):
+            score, _, node = self.final.get()
+            nodes.put((score, next(self._counter), node))
+        
+        # prune from the unfinished nodes based on the best finished log probability
+        remaining_beams_to_add = self.beam_size - finished
+        
+        # Process unfinished nodes in self.nodes and keep those with score >= best_finished_logp
+        while remaining_beams_to_add > 0 and not self.nodes.empty():
+            score, _, node = self.nodes.get()
+            
+            if score >= self.best_finished_logp:  # Only keep nodes with score >= best finished score
+                nodes.put((score, next(self._counter), node))
+                remaining_beams_to_add -= 1
 
-        # TODO modify below
-        while not self.nodes.empty():
-            node = self.nodes.get()
-            # Only keep nodes with scores better than the best finished score
-            if -node[0] >= min_finished_score:
-                nodes.put(node)
-
-        # Re-add the top nodes up to the beam size
-        for _ in range(self.beam_size - finished):
-            if nodes.empty():
-                break
-            nodes.put(nodes.get())
-
+        # Update the main nodes priority queue
         self.nodes = nodes
-
-    def has_active_nodes(self):
-        """ Check if there are any nodes left to expand. """
-        return not self.nodes.empty()
-
 
 
 class BeamSearchNode(object):
