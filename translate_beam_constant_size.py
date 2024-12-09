@@ -10,10 +10,11 @@ from torch.serialization import default_restore_location
 from seq2seq import models, utils
 from seq2seq.data.dictionary import Dictionary
 from seq2seq.data.dataset import Seq2SeqDataset, BatchSampler
-from seq2seq.beam_old import BeamSearch, BeamSearchNode
+from seq2seq.beam import BeamSearch, BeamSearchNode
 
 # measure decoding time
 import time
+import inspect
 
 
 def get_args():
@@ -150,14 +151,14 @@ def main(args):
         # Start generating further tokens until max sentence length reached
         
         # Initialize best finished scores to -inf for all beams
-        # best_finished_scores = [-float('inf')] * batch_size
-        best_finished_scores = []
+        best_finished_scores = [-float('inf')] * batch_size
+        # best_finished_scores = []
         for search in searches:
             if not search.final.empty():  # If there are finished hypotheses
                 best_score, _, _ = search.final.queue[0]  # Get the best score (lowest negative log prob)
-                best_finished_scores.append(best_score)
+                best_finished_scores[i] = best_score
             else:  # No finished hypotheses yet
-                best_finished_scores.append(-float('inf'))
+                best_finished_scores[i] = -float('inf')
 
         
         for _ in range(args.max_len-1):
@@ -168,8 +169,22 @@ def main(args):
             if not nodes:
                 break
 
+            # Find the maximum length among the current sequences
+            max_length = max(len(node.sequence) for node in nodes)
+
+            # Pad sequences to the maximum length
+            padded_sequences = []
+            for node in nodes:
+                # Pad the sequence to the max length using eos_idx (or any padding index you prefer)
+                padded_sequence = torch.cat([node.sequence, torch.tensor([tgt_dict.eos_idx] * (max_length - len(node.sequence)), device=node.sequence.device)])
+
+                padded_sequences.append(torch.tensor(padded_sequence))  # Convert list to tensor
+
+            # Now you can safely stack the padded sequences
+            prev_words = torch.stack(padded_sequences).long()
+
             # Reconstruct prev_words, encoder_out from current beam search nodes
-            prev_words = torch.stack([node.sequence for node in nodes])
+            # prev_words = torch.stack([node.sequence for node in nodes])
             encoder_out["src_embeddings"] = torch.stack([node.emb for node in nodes], dim=1)
             lstm_out = torch.stack([node.lstm_out for node in nodes], dim=1)
             final_hidden = torch.stack([node.final_hidden for node in nodes], dim=1)
@@ -198,7 +213,7 @@ def main(args):
                     next_word = torch.where(best_candidate == tgt_dict.unk_idx, backoff_candidate, best_candidate)
                     log_p = torch.where(best_candidate == tgt_dict.unk_idx, backoff_log_p, best_log_p)
                     log_p = log_p[-1]
-                    next_word = torch.cat((prev_words[i][1:], next_word[-1:]))
+                    next_word = torch.cat((prev_words[i][1:], next_word[-1:])).long()
 
                     # Get parent node and beam search object for corresponding sentence
                     node = nodes[i]
@@ -257,8 +272,25 @@ def main(args):
             The use of a priority queue ensures that nodes are automatically ordered by their scores.
             Importantly, completed seqs are tracked separately in self.final and remain safe from deletion/pruning.
             """
+ 
+            print("Prune method signature:", inspect.signature(BeamSearch.prune))
+            # search.prune(best_finished_scores[i])
+
+            print(f"Length of best_finished_scores: {len(best_finished_scores)}")
+            print(f"Index i: {i}")
+ 
             for i, search in enumerate(searches):
-                search.prune(best_finished_scores[i])
+                # print(f"Processing index {i}")
+
+                if i < len(best_finished_scores):
+                    print(f"Before pruning, search nodes: {search.nodes.qsize()}")
+                    search.prune(best_finished_scores[i])
+                    print(f"After pruning, search nodes: {search.nodes.qsize()}")
+
+                else:
+                    continue  # Skip to the next iteration or handle the error
+
+                # search.prune(best_finished_scores[i])
 
             # stop if no active nodes left
             if all(not search.has_active_nodes() for search in searches):

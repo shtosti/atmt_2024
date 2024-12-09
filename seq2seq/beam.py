@@ -57,25 +57,25 @@ class BeamSearch(object):
 
     def prune(self, min_finished_score=None):
         """ Removes all nodes but the beam_size best ones (lowest neg log prob).
-        Additionally, prune nodes with scores worse than the best finished hypothesis. """
+        Additionally, prune nodes with scores worse than the best finished hypothesis (if provided). """
         nodes = PriorityQueue()
         # Keep track of how many search paths are already finished (EOS)
         finished = self.final.qsize()
 
-        # TODO modify below
         while not self.nodes.empty():
             node = self.nodes.get()
-            # Only keep nodes with scores better than the best finished score
-            if -node[0] >= min_finished_score:
+            # Only keep nodes with scores better than the best finished score, if such a score is provided
+            if min_finished_score is None or -node[0] >= min_finished_score:
                 nodes.put(node)
 
         # Re-add the top nodes up to the beam size
         for _ in range(self.beam_size - finished):
             if nodes.empty():
                 break
-            nodes.put(nodes.get())
+            self.nodes.put(nodes.get())
 
         self.nodes = nodes
+
 
     def has_active_nodes(self):
         """ Check if there are any nodes left to expand. """
